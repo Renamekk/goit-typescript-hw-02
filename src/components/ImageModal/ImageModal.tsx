@@ -1,18 +1,28 @@
 import Modal from "react-modal";
 import css from "./ImageModal.module.css";
+import { ReactElement } from "react";
+import { IImageCard } from "../../App.Type.ts";
 
 Modal.setAppElement("#root");
+type ImageModalProps = {
+  isOpen: boolean;
+  onRequestClose: () => void;
+  imageData: IImageCard | null;
+};
 
-export default function ImageModal({ isOpen, onRequestClose, imageData }) {
+export default function ImageModal({
+  isOpen,
+  onRequestClose,
+  imageData,
+}: ImageModalProps): ReactElement | null {
   if (!imageData) return null;
 
   const {
-    regular,
+    urls: { regular },
     alt_description,
     description,
     likes,
-    instagram_username,
-    name,
+    user: { name, instagram_username },
   } = imageData;
 
   return (

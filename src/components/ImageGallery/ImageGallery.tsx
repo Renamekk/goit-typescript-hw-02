@@ -1,19 +1,24 @@
-import ImageCard from "../ImageCard/ImageCard";
 import css from "./ImageGallery.module.css";
+import { ReactElement, RefObject } from "react";
+import { IImageCard } from "../../App.Type.ts";
+import ImageCard from "../ImageCard/ImageCard.tsx";
 
-export default function ImageGallery({ items, onImageClick, lastPictureRef }) {
+type Props = {
+  items: IImageCard[];
+  onImageClick: (imageClick: IImageCard) => void;
+  lastPictureRef: RefObject<HTMLLIElement>;
+};
+
+export default function ImageGallery({
+  items,
+  onImageClick,
+  lastPictureRef,
+}: Props): ReactElement {
   return (
     <ul className={css.container}>
       {items.map(
         (
-          {
-            id,
-            urls: { regular, small },
-            alt_description,
-            description,
-            likes,
-            user: { instagram_username, name },
-          },
+          { id, urls, alt_description, description, likes, user }: IImageCard,
           i
         ) => {
           const isLast = i === items.length - 1;
@@ -24,16 +29,16 @@ export default function ImageGallery({ items, onImageClick, lastPictureRef }) {
               ref={isLast ? lastPictureRef : null}
             >
               <ImageCard
-                src={small}
+                src={urls.small}
                 alt={alt_description}
                 onClick={() =>
                   onImageClick({
-                    regular,
+                    id,
+                    urls,
                     alt_description,
                     description,
                     likes,
-                    instagram_username,
-                    name,
+                    user,
                   })
                 }
               />
