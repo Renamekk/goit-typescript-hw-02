@@ -1,58 +1,75 @@
-import Modal from "react-modal";
-import css from "./ImageModal.module.css";
-import { ReactElement } from "react";
-import { IImageCard } from "../../App.Type.ts";
+import React, { useEffect } from 'react';
+import Modal from 'react-modal';
+import './ImageModal.module.css';
 
-Modal.setAppElement("#root");
-type ImageModalProps = {
+interface ImageUrls {
+  regular: string;
+  small: string; 
+}
+
+interface Image {
+  urls: ImageUrls;
+  alt_description: string;
+}
+
+interface ImageModalProps {
+  image: Image | null;
   isOpen: boolean;
-  onRequestClose: () => void;
-  imageData: IImageCard | null;
+  onClose: () => void;
+}
+
+const customStyles = {
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  },
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    overflow: 'hidden',
+    maxWidth: '90vw',
+    maxHeight: '90vh',
+    width: 'auto',
+    height: '100%',
+    padding: '0',
+  },
 };
 
-export default function ImageModal({
-  isOpen,
-  onRequestClose,
-  imageData,
-}: ImageModalProps): ReactElement | null {
-  if (!imageData) return null;
+Modal.setAppElement('#root');
 
-  const {
-    urls: { regular },
-    alt_description,
-    description,
-    likes,
-    user: { name, instagram_username },
-  } = imageData;
+export default function ImageModal({ image, isOpen, onClose }: ImageModalProps) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
+
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  if (!image) return null;
 
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={onRequestClose}
-      className={css.modal}
-      overlayClassName={css.overlay}
+      onRequestClose={onClose}
+      style={customStyles}
+      contentLabel="Image Modal"
     >
-      <div className={css.content}>
-        <img src={regular} alt={alt_description} className={css.image} />
-        <div className={css.details}>
-          <p>
-            <strong>Author:</strong> {name}
-          </p>
-          {instagram_username && (
-            <p>
-              <strong>Instagram:</strong> @{instagram_username}
-            </p>
-          )}
-          {description && (
-            <p>
-              <strong>Description:</strong> {description}
-            </p>
-          )}
-          <p>
-            <strong>Likes:</strong> {likes}
-          </p>
-        </div>
-      </div>
+      <button className='btn' onClick={onClose}>Close</button>
+      <img className='img' src={image.urls.regular} alt={image.alt_description} />
     </Modal>
   );
 }

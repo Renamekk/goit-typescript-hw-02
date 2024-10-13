@@ -1,9 +1,9 @@
-import RiseLoader from "react-spinners/RiseLoader";
-import css from "./Loader.module.css";
+import { InfinitySpin } from 'react-loader-spinner';
 export default function Loader() {
   return (
-    <div className={css.loader}>
-      <RiseLoader color="#0000ff" />
-    </div>
+    <InfinitySpin
+      width="200"
+      color="#4fa94d"
+    />
   );
 }

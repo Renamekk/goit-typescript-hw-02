@@ -1,51 +1,32 @@
-import css from "./ImageGallery.module.css";
-import { ReactElement, RefObject } from "react";
-import { IImageCard } from "../../App.Type.ts";
-import ImageCard from "../ImageCard/ImageCard.tsx";
+import ImageCard from "../ImageCard/ImageCard";
+import './ImageGallery.module.css';
 
-type Props = {
-  items: IImageCard[];
-  onImageClick: (imageClick: IImageCard) => void;
-  lastPictureRef: RefObject<HTMLLIElement>;
-};
+interface ImageUrls {
+  small: string;
+  regular: string;
+}
 
-export default function ImageGallery({
-  items,
-  onImageClick,
-  lastPictureRef,
-}: Props): ReactElement {
+interface Image {
+  id: string;
+  urls: ImageUrls;
+  alt_description: string;
+}
+
+interface ImageGalleryProps {
+  images: Image[];
+  openModal: (image: Image) => void;
+}
+
+export default function ImageGallery({ images, openModal }: ImageGalleryProps) {
   return (
-    <ul className={css.container}>
-      {items.map(
-        (
-          { id, urls, alt_description, description, likes, user }: IImageCard,
-          i
-        ) => {
-          const isLast = i === items.length - 1;
-          return (
-            <li
-              key={id}
-              className={css.wrap}
-              ref={isLast ? lastPictureRef : null}
-            >
-              <ImageCard
-                src={urls.small}
-                alt={alt_description}
-                onClick={() =>
-                  onImageClick({
-                    id,
-                    urls,
-                    alt_description,
-                    description,
-                    likes,
-                    user,
-                  })
-                }
-              />
-            </li>
-          );
-        }
-      )}
-    </ul>
+    <>
+      <ul className='imagegallery'>
+        {images.map((image) => (
+          <li key={image.id}>
+            <ImageCard image={image} onClick={() => openModal(image)} />
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }

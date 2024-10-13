@@ -1,14 +1,21 @@
-import css from "./ImageCard.module.css";
-import { ReactElement } from "react";
-type Props = {
-  alt: string;
-  src: string;
+interface ImageUrls {
+  small: string;
+}
+
+interface Image {
+  urls: ImageUrls;
+  alt_description: string;
+}
+
+interface ImageCardProps {
+  image: Image;
   onClick: () => void;
-};
-export default function ImageCard({ alt, src, onClick }: Props): ReactElement {
+}
+
+export default function ImageCard({ image, onClick }: ImageCardProps) {
   return (
-    <div>
-      <img src={src} alt={alt} onClick={onClick} className={css.cardImg} />
+    <div onClick={onClick}>
+      <img src={image.urls.small} alt={image.alt_description} />
     </div>
   );
 }

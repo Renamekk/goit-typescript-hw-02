@@ -1,48 +1,48 @@
-import { forwardRef } from "react";
-import { Formik, Form, Field, FormikHelpers } from "formik";
+import { useForm, SubmitHandler } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
-import css from "./SearchBar.module.css";
-import { FiSearch } from "react-icons/fi";
-import { IFormValues, ISearchBarProps } from "./Search.types.ts";
+import React, { useEffect } from "react";
+import './SearchBar.css';
 
-const SearchBar = forwardRef<HTMLElement, ISearchBarProps>(
-  function SearchBarComponent({ onSearch }, ref) {
-    const handleSubmit = (
-      values: IFormValues,
-      actions: FormikHelpers<IFormValues>
-    ) => {
-      const text = values.query.trim();
-      if (!text) {
-        toast.error("Enter a query before!");
-        return;
-      }
-      onSearch(text);
-      actions.resetForm();
-    };
+interface SearchFormValues {
+  search: string;
+}
 
-    return (
-      <header className={css.container} ref={ref}>
-        <Formik initialValues={{ query: "" }} onSubmit={handleSubmit}>
-          <Form className={css.wraper}>
-            <Field
-              type="text"
-              name="query"
-              autoComplete="off"
-              autoFocus
-              placeholder="Search images and photos"
-              className={css.input}
-            />
+interface SearchBarProps {
+  onSearch: (query: string) => void;
+}
 
-            <Toaster position="top-right" reverseOrder={false} />
+export default function SearchBar({ onSearch }: SearchBarProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SearchFormValues>();
 
-            <button type="submit">
-              <FiSearch size="16px" />
-            </button>
-          </Form>
-        </Formik>
+  const onSubmit: SubmitHandler<SearchFormValues> = (data) => {
+    onSearch(data.search);
+  };
+
+  useEffect(() => {
+    if (errors.search && errors.search.message) {
+      toast.error(errors.search.message);
+    }
+  }, [errors]);
+
+  return (
+    <>
+      <header className="header">
+        <Toaster />
+        <form className="form" onSubmit={handleSubmit(onSubmit)}>
+          <input
+            type="text"
+            autoComplete="off"
+            autoFocus
+            placeholder="Search images and photos"
+            {...register("search", { required: "This field is required" })}
+          />
+          <button type="submit">Search</button>
+        </form>
       </header>
-    );
-  }
-);
-
-export default SearchBar;
+    </>
+  );
+}
