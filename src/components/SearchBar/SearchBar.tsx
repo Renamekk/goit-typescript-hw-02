@@ -1,7 +1,7 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import React, { useEffect } from "react";
-import './SearchBar.css';
+import './SearchBar.module.css';
 
 interface SearchFormValues {
   search: string;
